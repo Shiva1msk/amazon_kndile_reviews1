@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Amazon Kindle Review Analysis</title>
+    <!-- Correct CSS reference -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="tree-image">
+            <!-- Correct image reference -->
+            <img src="{{ url_for('static', filename='imgs/back.jpg') }}" alt="Tree and child reading">
+        </div>
+        <div class="title">
+            <h1>Analysis of Amazon Kindle Reviews</h1>
+        </div>
+        <div class="review-input">
+            <input type="text" id="review-input" placeholder="Enter your review here...">
+        </div>
+        <div class="button-container">
+            <!-- <button id="analyze-button">Analyze</button> -->
+        </div>
+        <div class="result-container">
+            <p id="result"></p>
+        </div>
+    </div>
+   <!-- HTML Input for Review -->
+<button   id="analyze-button"    onclick="submitReview()">Analyze</button>
+<div id="result"></div>
+
+<script>
+    function submitReview() {
+        const reviewInput = document.getElementById("review-input").value.trim();  // Using trim() to remove leading/trailing spaces
+
+        // Check if the review input is empty
+        if (reviewInput === '') {
+            alert("Please enter a review before submitting.");
+            return;  // Prevent sending the request
+        }
+
+        console.log("Sending review input:", reviewInput);  // Log the input to see what is being sent
+
+        fetch('/y_predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ "Sentence": reviewInput })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Response from backend:", data);  // Log the response from the backend
+            document.getElementById("result").innerHTML = data.prediction_text;
+        })
+        .catch(error => {
+            console.error("Error:", error);  // Log any errors that occur
+            document.getElementById("result").innerHTML = "An error occurred.";
+        });
+    }
+</script>
+
+</body>
+</html>
